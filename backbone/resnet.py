@@ -14,14 +14,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..utils import type_check
-
-# 预训练模型的地址
-model_urls = {
-    50: 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
-    101: 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
-    152: 'https://download.pytorch.org/models/resnet152-b121ed2d.pth'
-}
+from ..utils import type_check, load_state_dict_from_url
+from .fpn import FPN
+from .batch_norm import BatchNorm2d
 
 
 @type_check(int, int, int)
@@ -149,6 +144,7 @@ class ResNet(nn.Module):
         self.cfg = cfg
         self.use_fpn = cfg.FPN.ON
         num_layers = cfg.BACKBONE.NUM_LAYERS
+        suffix = cfg.BACKBONE.SUFFIX
         assert num_layers in [50, 101, 152], 'num_layers should be in [50, 101, 152]'
         if num_layers == 50:
             self.num_layers = [3, 4, 6, 3]
@@ -180,66 +176,7 @@ class ResNet(nn.Module):
         # 把加载部分的代码封装到utils.py中
         if pretrained:
             print('loading pretrained weights')
-            #model_url = model_urls[num_layers]
-            #state_dict = load_state_dict_from_url(model_url)
-
-            import pickle
-            c2_weights = pickle.load(open('/home/yohannxu/Downloads/R-50.pkl', 'rb'), encoding='latin1')
-
-            weights = {}
-            for name, value in sorted(c2_weights.items()):
-                name = name.replace("_", ".")
-                name = name.replace(".w", ".weight")
-                name = name.replace(".bn", "_bn")
-                name = name.replace(".b", ".bias")
-                name = name.replace("_bn.s", "_bn.scale")
-                name = name.replace(".biasranch", ".branch")
-                name = name.replace("bbox.pred", "bbox_pred")
-                name = name.replace("cls.score", "cls_score")
-                name = name.replace("res.conv1_", "conv1_")
-
-                name = name.replace("_bn.scale", "_bn.weight")
-
-                name = name.replace("conv1_bn.", "bn1.")
-
-                name = name.replace("res2.", "layer1.")
-                name = name.replace("res3.", "layer2.")
-                name = name.replace("res4.", "layer3.")
-                name = name.replace("res5.", "layer4.")
-
-                name = name.replace(".branch2a.", ".conv1.")
-                name = name.replace(".branch2a_bn.", ".bn1.")
-                name = name.replace(".branch2b.", ".conv2.")
-                name = name.replace(".branch2b_bn.", ".bn2.")
-                name = name.replace(".branch2c.", ".conv3.")
-                name = name.replace(".branch2c_bn.", ".bn3.")
-
-                name = name.replace(".branch1.", ".downsample.0.")
-                name = name.replace(".branch1_bn.", ".downsample.1.")
-
-                name = name.replace("downsample.0.gn.s", "downsample.1.weight")
-                name = name.replace("downsample.0.gn.bias", "downsample.1.bias")
-                name = name.replace('fc1000', 'fc')
-
-                if name == 'conv1.weight':
-                    name = 'stem.conv.weight'
-
-                if name == 'bn1.weight':
-                    name = 'stem.bn.weight'
-                if name == 'bn1.bias':
-                    name = 'stem.bn.bias'
-                weight = torch.from_numpy(value)
-                weight.requires_grad = True
-                weights[name] = weight
-
-            #weights = {}
-            # for name, value in state_dict.items():
-            #    if 'running' in name or 'bn' in name or 'downsample.1' in name:
-            #        continue
-            #    if name == 'conv1.weight':
-            #        name = stem.conv1.weight
-            #    weights[name] = value
-
+            weights = load_state_dict_from_url(num_layers, suffix)
             self.load_state_dict(weights, strict=False)
 
     @type_check(int)
