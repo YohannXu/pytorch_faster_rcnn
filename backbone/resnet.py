@@ -160,6 +160,7 @@ class ResNet(nn.Module):
         self.layer3 = self.make_stage(2)
         self.layer4 = self.make_stage(3)
 
+        # 冻结部分参数
         for layer_id in range(self.cfg.BACKBONE.NUM_FROZEN):
             if layer_id == 0:
                 m = self.stem
@@ -169,11 +170,11 @@ class ResNet(nn.Module):
             for p in m.parameters():
                 p.requires_grad = False
 
+        # 构建FPN模块
         if self.use_fpn:
             self.fpn = FPN(self.cfg)
 
-        # TODO 是否要分.pth和.pkl两种预训练权重来加载
-        # 把加载部分的代码封装到utils.py中
+        # 加载预训练权重
         if pretrained:
             print('loading pretrained weights')
             weights = load_state_dict_from_url(num_layers, suffix)
