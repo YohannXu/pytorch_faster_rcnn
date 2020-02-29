@@ -15,14 +15,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ..utils import type_check
-
+from easydict import EasyDict
 
 class FPN(nn.Module):
     """
     特征金字塔,融合低层高细节低语义和高层低细节高语义特征,进行更好的预测
     """
 
-    @type_check(str)
+    @type_check(object, EasyDict)
     def __init__(self, cfg):
         """
         Args:
@@ -50,7 +50,7 @@ class FPN(nn.Module):
             self.layer_names.append(layer_name)
         self.last_block = nn.MaxPool2d(1, 2, 0)
 
-    @type_check(list)
+    @type_check(object, list)
     def forward(self, x):
         last_inner = getattr(self, self.inner_names[-1])(x[-1])
         results = []

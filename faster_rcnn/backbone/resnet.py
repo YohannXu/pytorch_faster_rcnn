@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from easydict import EasyDict
 from ..utils import type_check, load_state_dict_from_url
 from .fpn import FPN
 from .batch_norm import BatchNorm2d
@@ -60,7 +61,7 @@ class BottleNeck(nn.Module):
     由于目标检测的训练过程中,batch size通常只有2~4,因此会影响bn的训练,故加载预训练模型参数后,就固定bn参数
     """
 
-    @type_check(int, int, int, nn.Module)
+    @type_check(object, int, int, int, nn.Module)
     def __init__(self, in_planes, planes, stride=1, downsample=None):
         """
         Args:
@@ -81,7 +82,7 @@ class BottleNeck(nn.Module):
         self.relu = nn.ReLU()
         self.downsample = downsample
 
-    @type_check(torch.Tensor)
+    @type_check(object, torch.Tensor)
     def forward(self, x):
         shortcut = x
 
@@ -118,7 +119,7 @@ class Stem(nn.Module):
 
         nn.init.kaiming_normal_(self.conv.weight, a=1)
 
-    @type_check(torch.Tensor)
+    @type_check(object, torch.Tensor)
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
@@ -133,11 +134,11 @@ class ResNet(nn.Module):
     ResNet网络,由一个stem和4个stage构成
     """
 
-    @type_check(str, bool)
+    @type_check(object, EasyDict, bool)
     def __init__(self, cfg, pretrained=True):
         """
         Args:
-            cfg: str, config文件名
+            cfg: EasyDict, config文件
             pretrained: bool, 是否使用fpn
         """
         super(ResNet, self).__init__()
@@ -180,7 +181,7 @@ class ResNet(nn.Module):
             weights = load_state_dict_from_url(num_layers, suffix)
             self.load_state_dict(weights, strict=False)
 
-    @type_check(int)
+    @type_check(object, int)
     def make_stage(self, stage_id):
         """
         构建4个stage
@@ -209,7 +210,7 @@ class ResNet(nn.Module):
                 layers.append(BottleNeck(4 * plane, plane))
         return nn.Sequential(*layers)
 
-    @type_check(torch.Tensor)
+    @type_check(object, torch.Tensor)
     def forward(self, x):
         x = self.stem(x)
 

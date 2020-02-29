@@ -22,7 +22,7 @@ class BatchNorm2d(nn.Module):
     因为在进行目标检测任务训练时,对显存占用大,因此batch size较小,bn没法有效训练,因此固定
     """
 
-    @type_check(int)
+    @type_check(object, int)
     def __init__(self, num_channels):
         """
         Args:
@@ -34,7 +34,7 @@ class BatchNorm2d(nn.Module):
         self.register_buffer('running_mean', torch.zeros(num_channels))
         self.register_buffer('running_var', torch.ones(num_channels))
 
-    @type_check(torch.Tensor)
+    @type_check(object, torch.Tensor)
     def forward(self, x):
         scale = self.weight * self.running_var.rsqrt()
         bias = self.bias - self.running_mean * scale

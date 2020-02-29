@@ -23,6 +23,7 @@ from inspect import signature
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
+
 def type_check(*types):
     """
     用于输入参数类型检查
@@ -43,6 +44,7 @@ def type_check(*types):
             for name, value in input_args.arguments.items():
                 if name in arg_types:
                     if not isinstance(value, arg_types[name]):
+                        print(arg_types)
                         raise TypeError('Argument {} must be {}'.format(name, arg_types[name]))
             return func(*args, **kwargs)
         return wrapper
@@ -79,6 +81,7 @@ def load_state_dict_from_url(num_layers, suffix='pkl'):
     else:
         # 建立保存地址
         save_dir = '~/.cache/torch/checkpoints'
+        save_dir = os.path.expanduser(save_dir)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         url = model_urls[suffix][num_layers]
