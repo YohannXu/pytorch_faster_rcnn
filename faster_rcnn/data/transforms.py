@@ -86,7 +86,6 @@ class Resize():
     @type_check(object, dict)
     def __call__(self, inputs):
         image = inputs['image']
-        bbox = inputs['bbox']
 
         w, h = image.size
 
@@ -99,11 +98,18 @@ class Resize():
         resize_h = int(h * ratio)
 
         image = image.resize((resize_w, resize_h), self.interpolation)
-        bbox = bbox * ratio
+
+        ratio_w = resize_w / w
+        ratio_h = resize_h / h
 
         inputs['image'] = image
-        inputs['bbox'] = bbox
-        inputs['ratio'] = ratio
+        inputs['ratio'] = [ratio_w, ratio_h]
+
+        if 'bbox' in inputs:
+            bbox = inputs['bbox']
+            bbox[:, 0::2] *= ratio_w
+            bbox[:, 1::2] *= ratio_h
+            inputs['bbox'] = bbox
 
         return inputs
 
@@ -208,16 +214,10 @@ class ToTensor():
     @type_check(object, dict)
     def __call__(self, inputs):
         image = inputs['image']
-        bbox = inputs['bbox']
-        cat = inputs['cat']
 
         image = F.to_tensor(image)
-        bbox = torch.from_numpy(bbox)
-        cat = torch.from_numpy(cat)
 
         inputs['image'] = image
-        inputs['bbox'] = bbox
-        inputs['cat'] = cat
 
         return inputs
 

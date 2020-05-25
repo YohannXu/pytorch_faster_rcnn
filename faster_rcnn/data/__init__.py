@@ -1,2 +1,2 @@
-from .dataset import COCODataset, InferenceDataset, Collater
+from .dataset import COCODataset, InferenceDataset, Collater, DataSampler
 from .transforms import build_transforms

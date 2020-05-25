@@ -17,6 +17,7 @@ import torch.nn.functional as F
 from ..utils import type_check
 from easydict import EasyDict
 
+
 class FPN(nn.Module):
     """
     特征金字塔,融合低层高细节低语义和高层低细节高语义特征,进行更好的预测
@@ -39,7 +40,7 @@ class FPN(nn.Module):
             layer_name = 'fpn_layer_{}'.format(index)
 
             inner_block = nn.Conv2d(in_channel, self.out_channel, 1)
-            layer_block = nn.Conv2d(self.out_channel, self.out_channel, 3, 1, 1)
+            layer_block = nn.Conv2d(self.out_channel, self.out_channel, 3, 1, 1, 1)
             nn.init.kaiming_normal_(inner_block.weight, a=1)
             nn.init.kaiming_normal_(layer_block.weight, a=1)
             nn.init.constant_(inner_block.bias, 0)

@@ -73,35 +73,40 @@ class BottleNeck(nn.Module):
         super(BottleNeck, self).__init__()
         # 输出通道数为中间层通道数的4倍
         self.expansion = 4
-        self.conv1 = conv1x1(in_planes, planes)
+        self.downsample = downsample
+        self.conv1 = conv1x1(in_planes, planes, stride=stride)
         self.bn1 = BatchNorm2d(planes)
-        self.conv2 = conv3x3(planes, planes, stride=stride)
+        self.conv2 = conv3x3(planes, planes)
         self.bn2 = BatchNorm2d(planes)
         self.conv3 = conv1x1(planes, planes * self.expansion)
         self.bn3 = BatchNorm2d(planes * self.expansion)
-        self.relu = nn.ReLU()
-        self.downsample = downsample
+        if self.downsample:
+            for l in self.downsample.modules():
+                if isinstance(l, nn.Conv2d):
+                    nn.init.kaiming_uniform_(l.weight, a=1)
+        for l in [self.conv1, self.conv2, self.conv3]:
+            nn.init.kaiming_uniform_(l.weight, a=1)
 
     @type_check(object, torch.Tensor)
     def forward(self, x):
         shortcut = x
 
-        if self.downsample is not None:
-            shortcut = self.downsample(x)
-
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.relu(out)
+        out = F.relu_(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
-        out = self.relu(out)
+        out = F.relu_(out)
 
         out = self.conv3(out)
         out = self.bn3(out)
 
+        if self.downsample is not None:
+            shortcut = self.downsample(x)
+
         out += shortcut
-        out = self.relu(out)
+        out = F.relu_(out)
         return out
 
 
@@ -114,8 +119,6 @@ class Stem(nn.Module):
         super(Stem, self).__init__()
         self.conv = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn = BatchNorm2d(64)
-        self.relu = nn.ReLU()
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         nn.init.kaiming_normal_(self.conv.weight, a=1)
 
@@ -123,8 +126,8 @@ class Stem(nn.Module):
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
+        x = F.relu_(x)
+        x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
 
         return x
 
@@ -223,4 +226,4 @@ class ResNet(nn.Module):
             x = self.fpn([x1, x2, x3, x4])
             return x
         else:
-            return [x4]
+            return x4

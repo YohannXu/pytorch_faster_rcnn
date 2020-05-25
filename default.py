@@ -24,6 +24,14 @@ cfg.DATASET.BRIGHTNESS = 0.0
 cfg.DATASET.CONTRAST = 0.0
 cfg.DATASET.SATURATION = 0.0
 cfg.DATASET.HUE = 0.0
+cfg.DATASET.TRAIN_ROOT = '/datasets/coco/train2014'
+cfg.DATASET.TRAIN_ANNO = '/datasets/coco/annotations/instances_train2014.json'
+cfg.DATASET.VAL_ROOT = '/datasets/coco/val2014'
+cfg.DATASET.VAL_ANNO = '/datasets/coco/annotations/instances_val2014.json'
+cfg.DATASET.GROUP_THRESHOLD = [1]
+cfg.DATASET.TRAIN_BATCH_SIZE = 2
+cfg.DATASET.VAL_BATCH_SIZE = 1
+cfg.DATASET.NUM_WORKERS = 4
 
 cfg.BACKBONE = edict()
 cfg.BACKBONE.NUM_LAYERS = 50
@@ -36,18 +44,18 @@ cfg.FPN.IN_CHANNELS = [256, 512, 1024, 2048]
 cfg.FPN.OUT_CHANNEL = 256
 
 cfg.TRAIN = edict()
-cfg.TRAIN.EPOCHES = 20
-cfg.TRAIN.NUM_ITERS = 200000
-cfg.TRAIN.SAVE_INTERVAL = 2000
+cfg.TRAIN.NUM_ITERS = 90000
+cfg.TRAIN.LOG_INTERVAL = 1
+cfg.TRAIN.SAVE_INTERVAL = 1000
 cfg.TRAIN.LOGDIR = 'tensorboard'
 
 cfg.OPTIMIZER = edict()
-cfg.OPTIMIZER.BASE_LR = 0.02
+cfg.OPTIMIZER.BASE_LR = 0.0025
 cfg.OPTIMIZER.WEIGHT_DECAY = 0.0001
 cfg.OPTIMIZER.BIAS_LR = 2
 cfg.OPTIMIZER.BIAS_WEIGHT_DECAY = 0
 cfg.OPTIMIZER.MOMENTUM = 0.9
-cfg.OPTIMIZER.STEPS = (30000,)
+cfg.OPTIMIZER.STEPS = (60000, 80000)
 cfg.OPTIMIZER.GAMMA = 0.1
 cfg.OPTIMIZER.WARMUP_FACTOR = 1.0 / 3
 cfg.OPTIMIZER.WARMUP_ITERS = 500
@@ -61,16 +69,22 @@ cfg.RPN.SIZES = (32, 64, 128, 256, 512)
 # anchor长宽比
 cfg.RPN.RATIOS = (0.5, 1.0, 2.0)
 
-# NMS前每层feature map对应的anchors数量
-cfg.RPN.PRE_NMS_TOP_N = 2000
-# NMS后每层feature map对应的anchors数量
-cfg.RPN.POST_NMS_TOP_N = 2000
+# 训练时NMS前每层feature map对应的anchors数量
+cfg.RPN.PRE_NMS_TOP_N_TRAIN = 2000
+# 推断时NMS前每层feature map对应的anchors数量
+cfg.RPN.PRE_NMS_TOP_N_TEST = 1000
+# 训练时NMS后每层feature map对应的anchors数量
+cfg.RPN.POST_NMS_TOP_N_TRAIN = 2000
+# 推断时NMS后每层feature map对应的anchors数量
+cfg.RPN.POST_NMS_TOP_N_TEST = 1000
 # NMS阈值
-cfg.RPN.NMS_THRESHOLD = 0.5
+cfg.RPN.NMS_THRESHOLD = 0.7
 # NMS后处理是否在batch上做
 cfg.RPN.POST_PER_BATCH = True
-# NMS后处理保留的proposals数量
-cfg.RPN.POST_TOP_N = 2000
+# 训练时NMS后处理保留的proposals数量
+cfg.RPN.POST_TOP_N_TRAIN = 2000
+# 推断时NMS后处理保留的proposals数量
+cfg.RPN.POST_TOP_N_TEST = 1000
 # RPN前景阈值
 cfg.RPN.FG_IOU_THRESHOLD = 0.7
 # RPN背景阈值
@@ -97,13 +111,15 @@ cfg.ROI_BOX.BBOX_REG_WEIGHTS = (10.0, 10.0, 5.0, 5.0)
 cfg.ROI_BOX.RESOLUTION = 7
 # backbone输出的降采样系数
 cfg.ROI_BOX.RATIOS = (0.25, 0.125, 0.0625, 0.03125)
-#
+# RoIAlign参数
 cfg.ROI_BOX.SAMPLE_RATIO = 2
 # 全连接层维度
 cfg.ROI_BOX.HIDDEN_DIM = 1024
+# 类别数量
 cfg.ROI_BOX.NUM_CLASSES = 81
-#
+# 推断时概率阈值
 cfg.ROI_BOX.PROB_THRESHOLD = 0.05
-#
+# NMS阈值
 cfg.ROI_BOX.NMS_THRESHOLD = 0.5
+# 每张图片的最大检测数量
 cfg.ROI_BOX.DETECTIONS_PER_IMAGE = 100

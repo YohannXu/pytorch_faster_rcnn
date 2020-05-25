@@ -1,3 +1,12 @@
 *.swp
 *.py[cod]
 __pycache__
+tensorboard
+saved_models
+train.log
+infer_images
+test_results
+coco_det_random.json
+fast_val.py
+test.py
+results
