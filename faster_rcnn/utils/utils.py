@@ -5,24 +5,19 @@
 # Description: 提供各种工具
 
 import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-import sys
-import shutil
-import tempfile
 import pickle
+import shutil
+import sys
+import tempfile
+from collections import deque
 from functools import wraps
+from glob import glob
 from inspect import signature
 from urllib.parse import urlparse
 from urllib.request import urlopen
-from collections import defaultdict, deque
+
+import torch
+from tqdm import tqdm
 
 
 def type_check(*types):

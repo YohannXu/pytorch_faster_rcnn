@@ -4,18 +4,12 @@
 # CreateTime: 2020-03-06 16:17:54
 # Description: RPN部分的损失函数
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from easydict import EasyDict
 
 from ..utils import type_check
-from easydict import EasyDict
 from .anchor_generator import filter_anchors
 
 

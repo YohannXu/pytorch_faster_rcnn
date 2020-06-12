@@ -4,18 +4,12 @@
 # CreateTime: 2020-03-19 14:59:05
 # Description: RoI部分的损失函数
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from easydict import EasyDict
 
 from ...utils import type_check
-from easydict import EasyDict
 
 
 def smooth_l1_loss(pred, target, beta=1./9, size_average=True):

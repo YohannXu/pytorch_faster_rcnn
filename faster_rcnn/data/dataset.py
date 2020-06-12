@@ -4,25 +4,20 @@
 # CreateTime: 2020-03-05 15:01:30
 # Description: COCO格式数据集
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-from pycocotools.coco import COCO
-from torch.utils.data import Dataset, BatchSampler
-from torchvision.transforms import transforms as T
-from PIL import Image
-from easydict import EasyDict
-import math
-import json
 import bisect
 import itertools
+import json
+import math
+import os
+from glob import glob
+
+import torch
+from easydict import EasyDict
+from PIL import Image
+from pycocotools.coco import COCO
+from torch.utils.data import BatchSampler, Dataset
+from torchvision.transforms import transforms as T
+
 from ..utils import type_check
 
 

@@ -4,24 +4,21 @@
 # CreateTime: 2020-05-10 11:01:20
 # Description: test.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-from faster_rcnn.utils import last_checkpoint
-from faster_rcnn.data import InferenceDataset, Collater, build_transforms
-from torch.utils.data import DataLoader
-from model import Model
-from default import cfg
-import time
 import datetime
+import os
 import sys
+import time
+
+import cv2
+import numpy as np
+import torch
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from default import cfg
+from faster_rcnn.data import Collater, InferenceDataset, build_transforms
+from faster_rcnn.utils import last_checkpoint
+from model import Model
 
 device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -137,6 +134,10 @@ def speed_test():
     else:
         print('weight not found')
         sys.exit()
+
+    # checkpoint = 'model_pruned.pth'
+    # checkpoint = torch.load(checkpoint)['state_dict']
+    # model = torch.load('pruned_model.pth').to(device)
 
     model.eval()
     infer_times = []

@@ -4,19 +4,12 @@
 # CreateTime: 2020-03-19 14:59:10
 # Description: pool.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+from easydict import EasyDict
+from torchvision.ops import RoIAlign
 
 from ...utils import type_check
-from torchvision.ops import RoIAlign
-from easydict import EasyDict
 
 
 class Pool(nn.Module):

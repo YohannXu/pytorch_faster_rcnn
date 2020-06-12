@@ -4,18 +4,11 @@
 # CreateTime: 2020-02-27 19:27:39
 # Description: FPN模块
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from easydict import EasyDict
 
 from ..utils import type_check
-from easydict import EasyDict
 
 
 class FPN(nn.Module):

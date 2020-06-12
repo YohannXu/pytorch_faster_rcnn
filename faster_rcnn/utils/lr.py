@@ -4,18 +4,10 @@
 # CreateTime: 2020-03-21 23:32:55
 # Description: lr.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+
+from bisect import bisect_right
 
 import torch.optim as optim
-from bisect import bisect_right
 
 
 class WarmupMultiStepLR(optim.lr_scheduler._LRScheduler):

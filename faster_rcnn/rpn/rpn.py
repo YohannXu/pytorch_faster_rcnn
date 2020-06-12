@@ -4,23 +4,17 @@
 # CreateTime: 2020-03-06 16:17:44
 # Description: RPN流程部分
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
+import math
+
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+from easydict import EasyDict
+from torchvision.ops import nms
 
 from ..utils import type_check
-import math
-from easydict import EasyDict
-from .anchor_generator import AnchorGenerator, filter_anchors
+from .anchor_generator import AnchorGenerator
 from .head import RPNHead
 from .loss import RPNLoss
-from torchvision.ops import nms
 
 
 class RPN(nn.Module):
@@ -35,9 +29,9 @@ class RPN(nn.Module):
         self.rpn_head = RPNHead(cfg)
         self.loss = RPNLoss(cfg)
         self.cfg = cfg
-        self.post_nms_top_n = self.cfg.RPN.POST_NMS_TOP_N_TRAIN if self.training else self.cfg.RPN.POST_NMS_TOP_N_TEST
-        self.pre_nms_top_n = self.cfg.RPN.PRE_NMS_TOP_N_TRAIN if self.training else self.cfg.RPN.PRE_NMS_TOP_N_TEST
-        self.post_top_n = self.cfg.RPN.POST_TOP_N_TRAIN if self.training else self.cfg.RPN.POST_TOP_N_TEST
+        self.post_nms_top_n = self.cfg.RPN.POST_NMS_TOP_N_TRAIN if is_train else self.cfg.RPN.POST_NMS_TOP_N_TEST
+        self.pre_nms_top_n = self.cfg.RPN.PRE_NMS_TOP_N_TRAIN if is_train else self.cfg.RPN.PRE_NMS_TOP_N_TEST
+        self.post_top_n = self.cfg.RPN.POST_TOP_N_TRAIN if is_train else self.cfg.RPN.POST_TOP_N_TEST
         self.nms_threshold = self.cfg.RPN.NMS_THRESHOLD
 
     @type_check(object, torch.Tensor, int)
@@ -151,7 +145,7 @@ class RPN(nn.Module):
             if logits[i] > 0:
                 if i != num_proposals - 1:
                     ious = self.iou(area, proposals, i)
-                    logits[i + 1:][ious > self.threshold] = -1
+                    logits[i + 1:][ious > self.nms_threshold] = -1
                 keep.append(i)
         keep = torch.LongTensor(keep)
 

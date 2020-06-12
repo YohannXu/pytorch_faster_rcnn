@@ -4,22 +4,17 @@
 # CreateTime: 2020-03-19 14:58:56
 # Description: roi流程
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-import math
-from ...utils import type_check
 from easydict import EasyDict
+from torchvision.ops import nms
+
+from ...utils import type_check
 from .head import RoIHead
 from .loss import RoILoss
-from torchvision.ops import nms
 
 
 class BoxRoI(nn.Module):

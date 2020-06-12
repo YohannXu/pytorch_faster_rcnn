@@ -4,22 +4,14 @@
 # CreateTime: 2020-03-31 16:35:21
 # Description: model.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+from easydict import EasyDict
 
 from faster_rcnn.backbone import ResNet
-from faster_rcnn.rpn import RPN
 from faster_rcnn.rois.box_roi import BoxRoI
+from faster_rcnn.rpn import RPN
 from faster_rcnn.utils import type_check
-from easydict import EasyDict
-from apex import amp
 
 
 class Model(nn.Module):
@@ -32,6 +24,7 @@ class Model(nn.Module):
         self.backbone = ResNet(cfg, pretrained)
         self.rpn = RPN(cfg, is_train)
         self.roi = BoxRoI(cfg, is_train)
+        # 如果使用混合精度, 需要手动将其转换为半精度运算
         # self.roi.head.pool.forward = amp.half_function(self.roi.head.pool.forward)
 
     @type_check(object, torch.Tensor, torch.Tensor, list, list)

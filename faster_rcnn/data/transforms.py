@@ -4,21 +4,15 @@
 # CreateTime: 2020-03-05 15:01:37
 # Description: transforms.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
 
 import random
+
+import torchvision.transforms.functional as F
 from easydict import EasyDict
 from PIL import Image
-from ..utils import type_check
 from torchvision import transforms as T
-import torchvision.transforms.functional as F
+
+from ..utils import type_check
 
 
 @type_check(EasyDict, bool)

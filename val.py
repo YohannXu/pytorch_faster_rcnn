@@ -4,34 +4,28 @@
 # CreateTime: 2020-05-09 21:48:46
 # Description: eval.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import sys
 import json
-
+import sys
 from collections import OrderedDict
-from torch.utils.data import DataLoader
-from faster_rcnn.data import COCODataset, Collater, DataSampler, build_transforms
-from faster_rcnn.utils import last_checkpoint
-from model import Model
-from default import cfg
+
+import torch
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from default import cfg
+from faster_rcnn.data import (COCODataset, Collater, DataSampler,
+                              build_transforms)
+from faster_rcnn.utils import last_checkpoint
+from model import Model
 
 device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 cpu_device = torch.device('cpu')
 
 
-def val():
+def val(model):
     is_train = False
-    model = Model(cfg, is_train=is_train).to(device)
     global_step = 1
 
     dataset = COCODataset(
@@ -46,16 +40,6 @@ def val():
         collate_fn=collater,
         batch_sampler=sampler,
         num_workers=2)
-
-    # checkpoint = last_checkpoint(cfg)
-    checkpoint = './model_90000.pth'
-    if checkpoint:
-        print('loading {}'.format(checkpoint))
-        checkpoint = torch.load(checkpoint)
-        model.load_state_dict(checkpoint['state_dict'])
-    else:
-        print('weight not found')
-        sys.exit()
 
     model.eval()
 
@@ -170,4 +154,29 @@ class COCOResults(object):
 
 
 if __name__ == '__main__':
-    val()
+    model = Model(cfg, is_train=False).to(device)
+
+    checkpoint = last_checkpoint(cfg)
+    if checkpoint:
+        print('loading {}'.format(checkpoint))
+        checkpoint = torch.load(checkpoint)
+        model.load_state_dict(checkpoint['state_dict'])
+    else:
+        print('weight not found')
+        sys.exit()
+
+    # model = Model(cfg, pretrained=False, is_train=False).to(device)
+    # state_dict = torch.load('pruned_model_0/model_9000.pth')
+    # for name, m in model.named_modules():
+    #     if name + '.weight' in state_dict:
+    #         m.weight.data = state_dict[name + '.weight']
+    #     if name + '.bias' in state_dict:
+    #         m.bias.data = state_dict[name + '.bias']
+    #     if name + '.running_mean' in state_dict:
+    #         m.running_mean.data = state_dict[name + '.running_mean']
+    #     if name + '.running_var' in state_dict:
+    #         m.running_var.data = state_dict[name + '.running_var']
+    # for name, p in model.named_parameters():
+    #     print(name, p.shape)
+
+    val(model)

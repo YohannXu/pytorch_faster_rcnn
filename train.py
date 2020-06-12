@@ -4,29 +4,24 @@
 # CreateTime: 2020-02-29 21:20:01
 # Description: test.py
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-import math
-import time
 import datetime
-import shutil
 import logging
-from torch.utils.tensorboard import SummaryWriter
+import os
+import shutil
+import sys
+import time
+
+import torch
 import torch.optim as optim
-from torch.utils.data import DataLoader
-from faster_rcnn.data import COCODataset, Collater, build_transforms, DataSampler
-from faster_rcnn.utils import WarmupMultiStepLR, Metric, last_checkpoint
-from default import cfg
-from model import Model
 from apex import amp
+from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
+
+from default import cfg
+from faster_rcnn.data import (COCODataset, Collater, DataSampler,
+                              build_transforms)
+from faster_rcnn.utils import Metric, WarmupMultiStepLR, last_checkpoint
+from model import Model
 
 device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 

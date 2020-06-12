@@ -7,6 +7,10 @@ train.log
 infer_images
 test_results
 coco_det_random.json
-fast_val.py
+det_tmp.json
 test.py
 results
+test_results
+onnx_test.py
+prune.py
+faster_rcnn/rois/box_roi/roi_align.py

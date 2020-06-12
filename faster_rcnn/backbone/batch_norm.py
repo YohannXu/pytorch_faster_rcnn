@@ -4,17 +4,11 @@
 # CreateTime: 2020-02-27 19:27:33
 # Description: 参数固定的BatchNorm2d
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from ..utils import type_check
+
 
 class BatchNorm2d(nn.Module):
     """

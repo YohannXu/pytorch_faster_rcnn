@@ -4,18 +4,11 @@
 # CreateTime: 2020-03-19 14:59:00
 # Description: roi概率预测与回归预测部分
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from easydict import EasyDict
 
 from ...utils import type_check
-from easydict import EasyDict
 from .pool import Pool
 
 

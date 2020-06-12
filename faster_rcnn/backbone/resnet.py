@@ -4,20 +4,14 @@
 # CreateTime: 2020-02-26 22:31:20
 # Description: 构建resnet
 
-import os
-import numpy as np
-import pandas as pd
-import cv2
-from glob import glob
-from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from easydict import EasyDict
-from ..utils import type_check, load_state_dict_from_url
-from .fpn import FPN
+
+from ..utils import load_state_dict_from_url, type_check
 from .batch_norm import BatchNorm2d
+from .fpn import FPN
 
 
 @type_check(int, int, int)
