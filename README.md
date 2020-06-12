@@ -1,37 +1,44 @@
 # pytorch_faster_rcnn
+
 Faster RCNN implemented by pytorch
 
-### Requirements
+## Requirements
 
-python3.6
+- python3.6
+- torch>=1.4.0
+- torchvision>=0.5.0
 
-torch>=1.4.0
+## Install
 
-torchvision>=0.5.0
+```bash
+git clone https://github.com/YohannXu/pytorch_faster_rcnn.git
 
-### Usage
+cd pytorch_faster_rcnn
 
-训练
+# 依赖安装
+pip install -r requirements.txt
 
+# apex 安装
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 ```
+
+## Usage
+
+```bash
+# 训练
 python train.py
-```
 
-验证
-
-```
+# 验证
 python val.py
-```
 
-测试
-
-```
+# 推断（测试）
 python infer.py
 ```
 
-### 训练结果
+## 训练结果
 
-|   GPU   | 迭代次数 | batch size |  mAP   |
+|   GPU   | 迭代次数  | batch size |  mAP   |
 | :-----: | :------: | :--------: | :----: |
 | RTX2070 |  90000   |     2      | 26.48% |
-

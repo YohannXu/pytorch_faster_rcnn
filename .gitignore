@@ -14,3 +14,7 @@ test_results
 onnx_test.py
 prune.py
 faster_rcnn/rois/box_roi/roi_align.py
+
+# ide conf
+.idea/
+.vscode/
