@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-02-29 21:20:01
-# Description: test.py
+# Description: train.py
 
 import datetime
 import logging
@@ -18,8 +18,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 from default import cfg
-from faster_rcnn.data import (COCODataset, Collater, DataSampler,
-                              build_transforms)
+from faster_rcnn.data import COCODataset, Collater, DataSampler, build_transforms
 from faster_rcnn.utils import Metric, WarmupMultiStepLR, last_checkpoint
 from model import Model
 
@@ -31,11 +30,12 @@ def train():
     model = Model(cfg, is_train=is_train).to(device)
 
     # 构建优化器及学习率下降策略
+    lr = cfg.OPTIMIZER.BASE_LR
     params = []
     for key, value in model.named_parameters():
         if not value.requires_grad:
             continue
-        lr = cfg.OPTIMIZER.BASE_LR
+
         weight_decay = cfg.OPTIMIZER.WEIGHT_DECAY
         if 'bias' in key:
             lr = cfg.OPTIMIZER.BASE_LR * cfg.OPTIMIZER.BIAS_LR
@@ -45,7 +45,6 @@ def train():
     optimizer = optim.SGD(params, lr, momentum=cfg.OPTIMIZER.MOMENTUM)
     model, optimizer = amp.initialize(model, optimizer, opt_level='O0')
 
-    global_step = 1
     # 加载权重
     checkpoint = last_checkpoint(cfg)
     if 'model_final.pth' in checkpoint:
@@ -167,11 +166,12 @@ def train():
 
         # 定时保存模型
         if global_step % cfg.TRAIN.SAVE_INTERVAL == 0:
-            checkpoint = {}
-            checkpoint['state_dict'] = model.state_dict()
-            checkpoint['optimizer'] = optimizer.state_dict()
-            checkpoint['metric'] = metric
-            checkpoint['global_step'] = global_step
+            checkpoint = {
+                'state_dict': model.state_dict(),
+                'optimizer': optimizer.state_dict(),
+                'metric': metric,
+                'global_step': global_step
+            }
 
             if not os.path.exists(cfg.OUTPUT):
                 os.makedirs(cfg.OUTPUT)

@@ -10,7 +10,6 @@ coco_det_random.json
 det_tmp.json
 test.py
 results
-test_results
 onnx_test.py
 prune.py
 faster_rcnn/rois/box_roi/roi_align.py
@@ -18,3 +17,5 @@ faster_rcnn/rois/box_roi/roi_align.py
 # ide conf
 .idea/
 .vscode/
+
+my_default.py

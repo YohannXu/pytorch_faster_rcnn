@@ -15,8 +15,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from default import cfg
-from faster_rcnn.data import (COCODataset, Collater, DataSampler,
-                              build_transforms)
+from faster_rcnn.data import COCODataset, Collater, DataSampler, build_transforms
 from faster_rcnn.utils import last_checkpoint
 from model import Model
 

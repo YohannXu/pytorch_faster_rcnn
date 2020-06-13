@@ -1,3 +1,5 @@
 torch>=1.4.0
 torchvision>=0.5.0
-apex>=0.9.10
+tensorboard==2.2.2
+easydict>=1.9
+pycocotools>=2.0.0
