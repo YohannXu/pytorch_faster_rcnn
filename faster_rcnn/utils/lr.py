@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-21 23:32:55
-# Description: lr.py
+# Description: 学习率相关
 
 
 from bisect import bisect_right

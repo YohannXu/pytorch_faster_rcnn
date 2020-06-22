@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-05-09 21:48:46
-# Description: eval.py
+# Description: 推理流程
 
 import json
 import sys
@@ -27,6 +27,7 @@ def val(model):
     is_train = False
     global_step = 1
 
+    # 加载数据集
     dataset = COCODataset(
         cfg,
         transforms=build_transforms(cfg),
@@ -42,6 +43,7 @@ def val(model):
 
     model.eval()
 
+    # 推理并保存结果
     predictions = {}
     for data in tqdm(dataloader):
         with torch.no_grad():
@@ -57,6 +59,7 @@ def val(model):
     image_ids = list(sorted(predictions.keys()))
     predictions = [predictions[i] for i in image_ids]
 
+    # 将类别索引映射回原始状态
     map_classes = {v: int(k) for k, v in dataset.classes.items()}
 
     coco_det = []
@@ -66,6 +69,7 @@ def val(model):
         bbox[:, 0::2] /= ratio[0]
         bbox[:, 1::2] /= ratio[1]
         x_min, y_min, x_max, y_max = bbox.split(1, dim=-1)
+        # xyxy -> xywh
         bbox = torch.cat((x_min, y_min, x_max - x_min + 1, y_max - y_min + 1), dim=-1)
 
         bbox = bbox.tolist()
@@ -163,19 +167,5 @@ if __name__ == '__main__':
     else:
         print('weight not found')
         sys.exit()
-
-    # model = Model(cfg, pretrained=False, is_train=False).to(device)
-    # state_dict = torch.load('pruned_model_0/model_9000.pth')
-    # for name, m in model.named_modules():
-    #     if name + '.weight' in state_dict:
-    #         m.weight.data = state_dict[name + '.weight']
-    #     if name + '.bias' in state_dict:
-    #         m.bias.data = state_dict[name + '.bias']
-    #     if name + '.running_mean' in state_dict:
-    #         m.running_mean.data = state_dict[name + '.running_mean']
-    #     if name + '.running_var' in state_dict:
-    #         m.running_var.data = state_dict[name + '.running_var']
-    # for name, p in model.named_parameters():
-    #     print(name, p.shape)
 
     val(model)

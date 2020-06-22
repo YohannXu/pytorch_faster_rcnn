@@ -168,10 +168,10 @@ class BoxRoI(nn.Module):
 
         for prob, box, size in zip(probs, boxes, sizes):
             # 裁剪到图片范围内
-            box[:, 0].clamp_(min=0, max=size[1] - 1)
-            box[:, 1].clamp_(min=0, max=size[0] - 1)
-            box[:, 2].clamp_(min=0, max=size[1] - 1)
-            box[:, 3].clamp_(min=0, max=size[0] - 1)
+            box[:, 0::4].clamp_(min=0, max=size[1] - 1)
+            box[:, 1::4].clamp_(min=0, max=size[0] - 1)
+            box[:, 2::4].clamp_(min=0, max=size[1] - 1)
+            box[:, 3::4].clamp_(min=0, max=size[0] - 1)
 
             inds = prob > self.prob_threshold
             num_classes = prob.shape[1]

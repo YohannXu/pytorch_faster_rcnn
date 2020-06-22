@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-06 16:17:44
-# Description: RPN流程部分
+# Description: RPN流程
 
 import math
 

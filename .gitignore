@@ -3,6 +3,7 @@
 __pycache__
 tensorboard
 saved_models
+pth_saved_models
 train.log
 infer_images
 test_results

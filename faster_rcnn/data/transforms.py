@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-05 15:01:37
-# Description: transforms.py
+# Description: 数据预处理
 
 
 import random
@@ -20,7 +20,10 @@ def build_transforms(cfg, is_train=True):
     """
     数据预处理
     """
-    mean = cfg.DATASET.MEAN
+    if cfg.BACKBONE.SUFFIX == 'pkl':
+        mean = cfg.DATASET.PKL_MEAN
+    else:
+        mean = cfg.DATASET.PTH_MEAN
     std = cfg.DATASET.STD
 
     if is_train:
@@ -43,7 +46,7 @@ def build_transforms(cfg, is_train=True):
                     hue
                 ),
                 ToTensor(),
-                Normalize(mean, std)
+                Normalize(cfg, mean, std)
             ]
         )
     else:
@@ -53,7 +56,7 @@ def build_transforms(cfg, is_train=True):
             [
                 Resize(min_size, max_size),
                 ToTensor(),
-                Normalize(mean, std)
+                Normalize(cfg, mean, std)
             ]
         )
 
@@ -192,14 +195,6 @@ class ColorJitter():
         return inputs
 
 
-class RandomCrop():
-    pass
-
-
-class MixUp():
-    pass
-
-
 class ToTensor():
     """
     将部分输入内容转为张量
@@ -221,13 +216,14 @@ class Normalize():
     对图片进行标准化处理
     """
 
-    @type_check(object, list, list)
-    def __init__(self, mean, std):
+    @type_check(object, EasyDict, list, list)
+    def __init__(self, cfg, mean, std):
         """
         Args:
             mean: float, 均值
             std: float, 标准差
         """
+        self.cfg = cfg
         self.mean = mean
         self.std = std
 
@@ -235,7 +231,8 @@ class Normalize():
     def __call__(self, inputs):
         image = inputs['image']
 
-        image = image[[2, 1, 0]] * 255
+        if self.cfg.BACKBONE.SUFFIX == 'pkl':
+            image = image[[2, 1, 0]] * 255
         image = F.normalize(image, self.mean, self.std)
 
         inputs['image'] = image

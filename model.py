@@ -2,10 +2,11 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-31 16:35:21
-# Description: model.py
+# Description: 定义模型
 
 import torch
 import torch.nn as nn
+from apex import amp
 from easydict import EasyDict
 
 from faster_rcnn.backbone import ResNet
@@ -25,7 +26,8 @@ class Model(nn.Module):
         self.rpn = RPN(cfg, is_train)
         self.roi = BoxRoI(cfg, is_train)
         # 如果使用混合精度, 需要手动将其转换为半精度运算
-        # self.roi.head.pool.forward = amp.half_function(self.roi.head.pool.forward)
+        if cfg.TRAIN.MIX_LEVEL == 'O1':
+            self.roi.head.pool.forward = amp.half_function(self.roi.head.pool.forward)
 
     @type_check(object, torch.Tensor, torch.Tensor, list, list)
     def forward(self, images, sizes=None, cats=None, bboxes=None):

@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-19 14:59:10
-# Description: pool.py
+# Description: 池化流程
 
 import torch
 import torch.nn as nn

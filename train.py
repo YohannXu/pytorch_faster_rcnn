@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-02-29 21:20:01
-# Description: train.py
+# Description: 训练流程
 
 import datetime
 import logging
@@ -29,7 +29,7 @@ def train():
     is_train = True
     model = Model(cfg, is_train=is_train).to(device)
 
-    # 构建优化器及学习率下降策略
+    # 构建优化器
     lr = cfg.OPTIMIZER.BASE_LR
     params = []
     for key, value in model.named_parameters():
@@ -41,9 +41,9 @@ def train():
             lr = cfg.OPTIMIZER.BASE_LR * cfg.OPTIMIZER.BIAS_LR
             weight_decay = cfg.OPTIMIZER.BIAS_WEIGHT_DECAY
         params += [{'params': [value], 'lr': lr, 'weight_decay': weight_decay}]
-
     optimizer = optim.SGD(params, lr, momentum=cfg.OPTIMIZER.MOMENTUM)
-    model, optimizer = amp.initialize(model, optimizer, opt_level='O0')
+    # 混合精度
+    model, optimizer = amp.initialize(model, optimizer, opt_level=cfg.TRAIN.MIX_LEVEL)
 
     # 加载权重
     checkpoint = last_checkpoint(cfg)
@@ -60,9 +60,14 @@ def train():
         metric = Metric()
         global_step = 1
 
+    # 学习率衰减策略
+    if cfg.BACKBONE.SUFFIX == 'pkl':
+        steps = cfg.OPTIMIZER.PKL_STEP
+    else:
+        steps = cfg.OPTIMIZER.PTH_STEPS
     scheduler = WarmupMultiStepLR(
         optimizer,
-        cfg.OPTIMIZER.STEPS,
+        steps,
         cfg.OPTIMIZER.GAMMA,
         cfg.OPTIMIZER.WARMUP_FACTOR,
         cfg.OPTIMIZER.WARMUP_ITERS,
@@ -181,7 +186,7 @@ def train():
         global_step += 1
 
         if global_step == max_iters:
-            torch.save(model.state_dict(), '{}/model_final.pth'.format(cfg.OUTPUT))
+            torch.save({'state_dict': model.state_dict()}, '{}/model_final.pth'.format(cfg.OUTPUT))
 
 
 if __name__ == '__main__':

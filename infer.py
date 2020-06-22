@@ -2,9 +2,10 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-31 16:29:30
-# Description: 推断流程
+# Description: 推理流程
 
 import os
+import sys
 
 import cv2
 import numpy as np
@@ -13,6 +14,7 @@ from torch.utils.data import DataLoader
 
 from default import cfg
 from faster_rcnn.data import Collater, InferenceDataset, build_transforms
+from faster_rcnn.utils import last_checkpoint
 from model import Model
 
 device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
@@ -121,17 +123,14 @@ def inference():
     )
     model = Model(cfg, is_train=is_train).to(device)
 
-    from prune import load_pruned_model
-    model = load_pruned_model(0, before=False)
-
-    # checkpoint = last_checkpoint(cfg)
-    # if checkpoint:
-    #     print('loading {}'.format(checkpoint))
-    #     checkpoint = torch.load(checkpoint)
-    #     model.load_state_dict(checkpoint['state_dict'])
-    # else:
-    #     print('weight not found')
-    #     sys.exit()
+    checkpoint = last_checkpoint(cfg)
+    if checkpoint:
+        print('loading {}'.format(checkpoint))
+        checkpoint = torch.load(checkpoint)
+        model.load_state_dict(checkpoint['state_dict'])
+    else:
+        print('weight not found')
+        sys.exit()
 
     model.eval()
     for data in dataloader:
@@ -150,9 +149,13 @@ def inference():
             box[:, 1::2] /= ratio[1]
 
             for b, p, l in zip(box, prob, label):
-                if p > 0.5:
+                if p > 0.7:
                     cv2.rectangle(ori_image, (b[0], b[1]), (b[2], b[3]), (0, 255, 0), 2)
-                    cv2.putText(ori_image, '{}_{:.2f}'.format(CATEGORIES[l], p), (b[0], b[1] - 10), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 1)
+                    # 如果box太靠上, 将文字放在box下方
+                    y = b[1] - 10
+                    if b[1] < 10:
+                        y += 30
+                    cv2.putText(ori_image, '{}_{:.2f}'.format(CATEGORIES[l], p), (b[0], y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
             cv2.imwrite('{}/{}'.format(save_dir, os.path.basename(name)), ori_image)

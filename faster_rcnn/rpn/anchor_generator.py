@@ -2,7 +2,7 @@
 # Author: yohannxu
 # Email: yuhannxu@gmail.com
 # CreateTime: 2020-03-06 16:18:04
-# Description: rpn网络生成anchors
+# Description: rpn部分生成anchors
 
 import numpy as np
 import torch
