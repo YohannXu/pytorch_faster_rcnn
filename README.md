@@ -66,6 +66,6 @@ python infer.py
 
 ## 6 TODO
 
-- 模型剪枝
-- 模型量化
-- TensorRT部署
+- [ ] 模型剪枝
+- [ ] 模型量化
+- [ ] TensorRT部署
