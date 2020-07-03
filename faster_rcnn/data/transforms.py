@@ -22,9 +22,10 @@ def build_transforms(cfg, is_train=True):
     """
     if cfg.BACKBONE.SUFFIX == 'pkl':
         mean = cfg.DATASET.PKL_MEAN
+        std = cfg.DATASET.PKL_STD
     else:
         mean = cfg.DATASET.PTH_MEAN
-    std = cfg.DATASET.STD
+        std = cfg.DATASET.PTH_STD
 
     if is_train:
         min_size = cfg.DATASET.MIN_SIZE

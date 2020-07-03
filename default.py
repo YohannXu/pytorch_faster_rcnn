@@ -19,12 +19,15 @@ cfg.DATASET.MAX_SIZE = 1333
 cfg.DATASET.TEST_MIN_SIZE = 800
 cfg.DATASET.TEST_MAX_SIZE = 1333
 # 图片归一化标准差
-cfg.DATASET.STD = (1., 1., 1.)
+# 使用caffe2预训练权重
+cfg.DATASET.PKL_STD = (1., 1., 1.)
+# 使用pytorch预训练权重
+cfg.DATASET.PTH_STD = (0.229, 0.224, 0.225)
 # 图片归一化均值
 # 使用caffe2预训练权重
 cfg.DATASET.PKL_MEAN = (102.9801, 115.9465, 122.7717)
 # 使用pytorch预训练权重
-cfg.DATASET.PTH_MEAN = (0.4815, 0.4547, 0.4038)
+cfg.DATASET.PTH_MEAN = (0.485, 0.456, 0.406)
 # 水平翻转概率
 cfg.DATASET.FLIP_HORIZONTAL_PROB = 0.0
 # 亮度调整
