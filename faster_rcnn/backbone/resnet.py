@@ -136,7 +136,7 @@ class ResNet(nn.Module):
         """
         Args:
             cfg: EasyDict, config文件
-            pretrained: bool, 是否使用fpn
+            pretrained: bool, 是否使用预训练权重
         """
         super(ResNet, self).__init__()
         self.cfg = cfg
