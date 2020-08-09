@@ -62,7 +62,7 @@ def train():
 
     # 学习率衰减策略
     if cfg.BACKBONE.SUFFIX == 'pkl':
-        steps = cfg.OPTIMIZER.PKL_STEP
+        steps = cfg.OPTIMIZER.PKL_STEPS
     else:
         steps = cfg.OPTIMIZER.PTH_STEPS
     scheduler = WarmupMultiStepLR(

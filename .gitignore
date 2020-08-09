@@ -21,3 +21,4 @@ latex
 .vscode/
 
 my_default.py
+model_final.pth

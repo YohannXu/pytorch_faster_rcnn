@@ -30,7 +30,7 @@ def val(model):
     # 加载数据集
     dataset = COCODataset(
         cfg,
-        transforms=build_transforms(cfg),
+        transforms=build_transforms(cfg, is_train=is_train),
         is_train=is_train
     )
     collater = Collater(cfg)

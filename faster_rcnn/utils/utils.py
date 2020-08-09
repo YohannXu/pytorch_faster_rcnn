@@ -76,7 +76,17 @@ def load_state_dict_from_url(num_layers, suffix='pkl'):
     assert suffix in ['pth', 'pkl'], 'Only support .pth or .pkl file'
 
     if suffix == 'pth':
-        weights = torch.hub.load_state_dict_from_url(model_urls[suffix][num_layers])
+        weights = {}
+        weight = torch.hub.load_state_dict_from_url(model_urls[suffix][num_layers])
+        for name, value in weight.items():
+            if name == 'conv1.weight':
+                name = 'stem.conv.weight'
+            if name == 'bn1.weight':
+                name = 'stem.bn.weight'
+            if name == 'bn1.bias':
+                name = 'stem.bn.bias'
+            weight.requires_grad = True
+            weights[name] = value
     else:
         # 建立保存地址
         save_dir = '~/.cache/torch/checkpoints'

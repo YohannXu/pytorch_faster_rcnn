@@ -39,13 +39,13 @@ cfg.DATASET.SATURATION = 0.0
 # 色度调整
 cfg.DATASET.HUE = 0.0
 # 训练集图片根目录
-cfg.DATASET.TRAIN_ROOT = '/datasets/coco/train2014'
+cfg.DATASET.TRAIN_ROOT = '/datasets/voc/train2007+12'
 # 训练集annotation路径
-cfg.DATASET.TRAIN_ANNO = '/datasets/coco/annotations/instances_train2014.json'
+cfg.DATASET.TRAIN_ANNO = '/datasets/voc/annotations/instance_train2007+12.json'
 # 验证集图片根目录
-cfg.DATASET.VAL_ROOT = '/datasets/coco/val2014'
+cfg.DATASET.VAL_ROOT = '/datasets/voc/val2007'
 # 验证集annotation路径
-cfg.DATASET.VAL_ANNO = '/datasets/coco/annotations/instances_val2014.json'
+cfg.DATASET.VAL_ANNO = '/datasets/voc/annotations/instances_val2007.json'
 # 图片分组阈值, 将图片根据长宽比进行分组
 # 从每组中生成batch, 避免长宽比差距过大的图片分到同一batch中, 造成显存占用过大的情况
 cfg.DATASET.GROUP_THRESHOLD = [1]
@@ -159,7 +159,7 @@ cfg.ROI_BOX.SAMPLE_RATIO = 2
 # 全连接层维度
 cfg.ROI_BOX.HIDDEN_DIM = 1024
 # 类别数量
-cfg.ROI_BOX.NUM_CLASSES = 81
+cfg.ROI_BOX.NUM_CLASSES = 21
 # 推断时概率阈值
 cfg.ROI_BOX.PROB_THRESHOLD = 0.05
 # NMS阈值

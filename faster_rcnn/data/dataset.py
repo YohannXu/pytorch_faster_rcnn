@@ -44,9 +44,13 @@ class COCODataset(Dataset):
             self.anno_file = cfg.DATASET.VAL_ANNO
 
         self.transforms = transforms
-        # COCO数据集中类别索引不是从1~80,因此手动调整到1~80
-        with open('faster_rcnn/data/classes.json') as f:
-            self.classes = json.load(f)
+
+        if 'coco' in self.root:
+            # COCO数据集中类别索引不是从1~80,因此手动调整到1~80
+            with open('faster_rcnn/data/classes.json') as f:
+                self.classes = json.load(f)
+        else:
+            self.classes = {str(i): i for i in range(1, 21)}
 
         # 加载数据集
         self.coco = COCO(self.anno_file)
