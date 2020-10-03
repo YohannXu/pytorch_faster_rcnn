@@ -94,7 +94,7 @@ class BoxRoI(nn.Module):
         y_br = torch.min(boxes[index, 3], boxes[index + 1:, 3])
 
         inter = (x_br - x_tl + 1).clamp(0) * (y_br - y_tl + 1).clamp(0)
-        iou = inter / (area[index] + area[index + 1] - inter)
+        iou = inter / (area[index] + area[index + 1:] - inter)
 
         return iou
 
